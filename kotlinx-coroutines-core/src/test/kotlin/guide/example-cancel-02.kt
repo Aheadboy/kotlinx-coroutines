@@ -17,8 +17,26 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.cancel.example02
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
+/**
+ * Cancellation is cooperative
+ * 协程的取消是协同的
+ * 在cancel-01的例子中，我们通过job.cancel()取消了一个协程。
+ * 这很容易让我们想当然地认为，每当需要取消协程时，调用job.cancel()总能奏效。事实并非如此；
+ * *******job.cancel()取消的只是挂起函数的调用，而不是一个正在执行的协程；*********
+ * 在本例中，协程并未涉及挂起函数的调用，取而代之的是在协程里面进行一个循环；
+ * 在循环进行的过程中，协程处于执行状态。job.cancel()并*******不能使协程中正在执行的内容立刻停止，但协程还是被取消了*******
+ * ***********这点务必注意，虽然没有立刻终止正在执行的内容，但是协程还是被取消了。isActive为false************。
+ * 在上例中，通过repeat函数多次（尝试调用1000次）调用挂起函数 delay(500L)
+ * 当协程被挂起之后，还没有重新唤醒（resume）之际，调用 job.cancel()，那么协程将会被成功取消
+ * 关于这一点，请看更清晰的例子example-cancel-02-ljj01.kt
+ *那么能否取消正在执行的协程呢？
+ * 答案是：可以；并且有两种方式；
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     val job = launch(CommonPool) {
         var nextPrintTime = System.currentTimeMillis()
@@ -33,7 +51,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     }
     delay(1300L) // delay a bit
     println("main: I'm tired of waiting!")
-    job.cancel() // cancels the job
+    println(job.cancel()) // cancels the job
     delay(1300L) // delay a bit to see if it was cancelled....
     println("main: Now I can quit.")
 }

@@ -19,11 +19,21 @@ package guide.cancel.example03
 
 import kotlinx.coroutines.experimental.*
 
+/**
+ * There are two approaches to making computation code cancellable.
+ * The first one is to periodically invoke a suspending function.
+ *
+ * There is a yield function that is a good choice for that purpose.
+ * The other one is to explicitly check the cancellation status. Let us try the later approach
+ * 有两种取消执行中代码的方法。
+ * 这里展示第二种。
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     val job = launch(CommonPool) {
         var nextPrintTime = 0L
         var i = 0
-        while (isActive) { // cancellable computation loop
+        while (isActive) { // cancellable computation loop 可通过 job.cancel()来取消的循环。
+            //当job取消了isActive为false，继续循环，条件不满足。
             val currentTime = System.currentTimeMillis()
             if (currentTime >= nextPrintTime) {
                 println("I'm sleeping ${i++} ...")

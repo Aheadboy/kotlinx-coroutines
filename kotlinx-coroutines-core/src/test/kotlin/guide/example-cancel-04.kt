@@ -17,8 +17,16 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.cancel.example04
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
+/**
+ * 本例告诉我们，取消是会报异常的。
+ * job.cancel(IndexOutOfBoundsException())
+ * 取消接受一个Throwable可空的参数，默认为null
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     val job = launch(CommonPool) {
         try {
@@ -26,13 +34,15 @@ fun main(args: Array<String>) = runBlocking<Unit> {
                 println("I'm sleeping $i ...")
                 delay(500L)
             }
+        } catch (e: Exception) {
+            println(e.printStackTrace())
         } finally {
             println("I'm running finally")
         }
     }
     delay(1300L) // delay a bit
     println("main: I'm tired of waiting!")
-    job.cancel() // cancels the job
+    job.cancel(IndexOutOfBoundsException()) // cancels the job
     delay(1300L) // delay a bit to ensure it was cancelled indeed
     println("main: Now I can quit.")
 }
