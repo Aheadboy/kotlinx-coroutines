@@ -17,7 +17,10 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.basic.example04
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
 fun main(args: Array<String>) = runBlocking<Unit> {
     val job = launch(CommonPool) { doWorld() }
@@ -25,6 +28,9 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     job.join()
 }
 
+//1、挂起函数可以像普通函数一样写在协程里面
+//2、挂起函数可以调用其他挂起函数。
+//3、普通函数不能调用挂起函数
 // this is your first suspending function
 suspend fun doWorld() {
     delay(1000L)

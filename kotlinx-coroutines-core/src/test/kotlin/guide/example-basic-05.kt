@@ -17,14 +17,25 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.basic.example05
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
+/**
+ * Coroutines ARE light-weight
+ * 协程是轻量的
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
-    val jobs = List(100_000) { // create a lot of coroutines and list their jobs
+    val jobs = List(100_000) {
+        // create a lot of coroutines and list their jobs
         launch(CommonPool) {
             delay(1000L)
-            print(".")
+            println(it)
         }
-    }
+    }//list包含了100_000个launch协程的返回值--job；
+    //list存放的内容就是list闭包的返回值。
+    //100_000个协程并不是从0到99999顺序执行完的。而是杂乱的，例如2,1,0，3.....这样无规律的顺序。
+    //所以应该等待所有的job执行完成。
     jobs.forEach { it.join() } // wait for all jobs to complete
 }

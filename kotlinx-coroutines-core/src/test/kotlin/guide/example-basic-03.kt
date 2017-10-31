@@ -17,13 +17,18 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.basic.example03
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
 fun main(args: Array<String>) = runBlocking<Unit> {
-    val job = launch(CommonPool) { // create new coroutine and keep a reference to its Job
-        delay(1000L)
+    val job = launch(CommonPool) {//launch与async的区别是返回值的区别。
+        // create new coroutine and keep a reference to its Job
+        delay(1000L)//该协程挂起1秒后唤醒
         println("World!")
     }
     println("Hello,")
-    job.join() // wait until child coroutine completes
+    job.join() // wait until child coroutine completes--join()是挂起函数：在挂起函数出现的地方，协程将被挂起
+             //该协程挂起，直到job完成，该协程唤醒。
 }
