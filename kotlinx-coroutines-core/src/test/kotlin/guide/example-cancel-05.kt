@@ -27,6 +27,8 @@ fun main(args: Array<String>) = runBlocking<Unit> {
                 delay(500L)
             }
         } finally {
+            //不可取消块
+            //将，将要被取消的协程阻塞住
             run(NonCancellable) {
                 println("I'm running finally")
                 delay(1000L)
