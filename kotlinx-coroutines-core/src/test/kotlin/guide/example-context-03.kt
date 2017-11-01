@@ -20,7 +20,9 @@ package guide.context.example03
 import kotlinx.coroutines.experimental.*
 
 fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
-
+/**
+ * 调试协程和线程
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     val a = async(coroutineContext) {
         log("I'm computing a piece of the answer")
