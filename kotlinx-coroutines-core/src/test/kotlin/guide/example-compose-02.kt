@@ -17,9 +17,25 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.compose.example02
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
 import kotlin.system.measureTimeMillis
 
+
+/**
+ * Concurrent using async
+ * 并发执行挂起函数
+ *
+ * What if there are no dependencies between invocation of doSomethingUsefulOne and doSomethingUsefulTwo
+ * and we want to get the answer faster, by doing both concurrently?
+ *
+ *  假如doSomethingUsefulOne（）doSomethingUsefulTwo（）两个函数之间没有依赖
+ *  并且希望他们并发执行，以最快的速度获取答案。我们该怎么做？
+ *
+ *  下面的代码清晰地展示了做法。
+ */
 suspend fun doSomethingUsefulOne(): Int {
     delay(1000L) // pretend we are doing something useful here
     return 13
@@ -32,9 +48,11 @@ suspend fun doSomethingUsefulTwo(): Int {
 
 fun main(args: Array<String>) = runBlocking<Unit> {
     val time = measureTimeMillis {
-        val one = async(CommonPool) { doSomethingUsefulOne() }
-        val two = async(CommonPool) { doSomethingUsefulTwo() }
-        println("The answer is ${one.await() + two.await()}")
+        val one = async(CommonPool) { doSomethingUsefulOne() }//协程1
+        val two = async(CommonPool) { doSomethingUsefulTwo() }//协程2
+        println("The answer is ${one.await() + two.await()}")//子协程one,two类似守护线程，如果没有这两个await，让runBlocking等待，则无法保活进程。
+        //通过这段代码，直观的感觉Deferred中的await有点类似Job中的join。
+        //是否真是如此，我们稍后加以了解。
     }
     println("Completed in $time ms")
 }
