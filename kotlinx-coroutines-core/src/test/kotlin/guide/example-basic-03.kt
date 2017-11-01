@@ -31,4 +31,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     println("Hello,")
     job.join() // wait until child coroutine completes--join()是挂起函数：在挂起函数出现的地方，协程将被挂起
              //该协程挂起，直到job完成，该协程唤醒。
+    //join()为挂起函数，使该协程非阻塞挂起。
+    //但是，注意，这里的runBlocking是一个特殊的协程，他是个阻塞当前线程的协程。
+    //主要使用场景为main函数，以及一些测试场景。
 }

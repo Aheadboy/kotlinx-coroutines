@@ -19,11 +19,24 @@ package guide.context.example07
 
 import kotlinx.coroutines.experimental.*
 
+/**
+ * Combining contexts
+ * 替换contexts的Element
+ */
+fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
+
 fun main(args: Array<String>) = runBlocking<Unit> {
     // start a coroutine to process some kind of incoming request
+    log("")
+
     val request = launch(coroutineContext) { // use the context of `runBlocking`
+        log("")
         // spawns CPU-intensive child job in CommonPool !!! 
-        val job = launch(coroutineContext + CommonPool) {
+//        val job = launch(coroutineContext + CommonPool) {//replaces,CommonPool
+//        log("")
+        val job = launch(coroutineContext + CommonPool+Job()+CoroutineName("CName")) {//replaces,CommonPool , Job and CoroutineName
+            log("")
+
             println("job: I am a child of the request coroutine, but with a different dispatcher")
             delay(1000)
             println("job: I will not execute this line if my parent request is cancelled")

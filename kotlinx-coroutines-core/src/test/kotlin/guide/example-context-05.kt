@@ -17,8 +17,21 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.context.example05
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.newSingleThreadContext
+import kotlinx.coroutines.experimental.runBlocking
 
+/**
+ * Job in the context
+ * 从协程内部获取Job
+ *
+ *
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     println("My job is ${coroutineContext[Job]}")
+    val jobLaunchReturn = launch(newSingleThreadContext("heheda")) {
+        println(coroutineContext[Job])
+    }
+    println(jobLaunchReturn)
 }

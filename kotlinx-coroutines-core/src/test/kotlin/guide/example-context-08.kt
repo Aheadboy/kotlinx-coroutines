@@ -19,6 +19,10 @@ package guide.context.example08
 
 import kotlinx.coroutines.experimental.*
 
+/**
+ * Naming coroutines for debugging
+ * 调试中的协程命名
+ */
 fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
 
 fun main(args: Array<String>) = runBlocking(CoroutineName("main")) {

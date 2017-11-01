@@ -19,6 +19,13 @@ package guide.context.example09
 
 import kotlinx.coroutines.experimental.*
 
+/**
+ * Cancellation via explicit job
+ * 通过取消指定job来取消依赖于该job的所有协程。
+ *
+ * 下面的例子构造了10个依赖于同一个job的协程。
+ * 当job.cancel()时，取消所有未唤醒的协程
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     val job = Job() // create a job object to manage our lifecycle
     // now launch ten coroutines for a demo, each working for a different time

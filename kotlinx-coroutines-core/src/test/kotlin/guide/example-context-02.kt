@@ -19,17 +19,40 @@ package guide.context.example02
 
 import kotlinx.coroutines.experimental.*
 
+
+/**
+ * The Unconfined coroutine dispatcher starts coroutine in the caller thread, but only until the first suspension point.
+ * After suspension it resumes in the thread that is fully determined by the suspending function that was invoked.
+ * 未限定的协程在调用线程里面启动，当协程被挂起并唤醒后，协程所处的线程将取决于唤醒挂起函数的线程。
+ * Unconfined dispatcher is appropriate when coroutine does not consume CPU time nor updates any shared data
+ * (like UI) that is confined to a specific thread.
+ * 未限定的使用场景是：
+ * 不消耗CPU，不更新共享数据（例如UI）
+ */
+fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")
+
 fun main(args: Array<String>) = runBlocking<Unit> {
     val jobs = arrayListOf<Job>()
-    jobs += launch(Unconfined) { // not confined -- will work with main thread
-        println("      'Unconfined': I'm working in thread ${Thread.currentThread().name}")
+    jobs += launch(Unconfined) {
+        // not confined -- will work with main thread
+        log("      'Unconfined': I'm working in thread ")//attention:[main ***@coroutine#1 @coroutine#2***]       'Unconfined': I'm working in thread
         delay(500)
-        println("      'Unconfined': After delay in thread ${Thread.currentThread().name}")
+        log("      'Unconfined': After delay1 in thread ")
+//        delay(500)
+//        log("      'Unconfined': After delay2 in thread ")
+//        delay(500)
+//        log("      'Unconfined': After delay3 in thread ")
     }
-    jobs += launch(coroutineContext) { // context of the parent, runBlocking coroutine
-        println("'coroutineContext': I'm working in thread ${Thread.currentThread().name}")
+
+    /**
+     * This way, a parent context can be inherited. The default context of runBlocking, in particular, is confined to be invoker thread,
+     * so inheriting it has the effect of confining execution to this thread with a predictable FIFO scheduling.
+     */
+    jobs += launch(coroutineContext) {
+        // context of the parent, runBlocking coroutine
+        log("'coroutineContext': I'm working in thread ")//[main @coroutine#3] 'coroutineContext': I'm working in thread //FIFO
         delay(1000)
-        println("'coroutineContext': After delay in thread ${Thread.currentThread().name}")
+        log("'coroutineContext': After delay in thread ")
     }
     jobs.forEach { it.join() }
 }
