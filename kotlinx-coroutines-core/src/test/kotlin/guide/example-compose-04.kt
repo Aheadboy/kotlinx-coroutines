@@ -17,7 +17,10 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.compose.example04
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
 import kotlin.system.measureTimeMillis
 
 suspend fun doSomethingUsefulOne(): Int {
@@ -36,7 +39,7 @@ fun asyncSomethingUsefulOne() = async(CommonPool) {
 }
 
 // The result type of asyncSomethingUsefulTwo is Deferred<Int>
-fun asyncSomethingUsefulTwo() = async(CommonPool)  {
+fun asyncSomethingUsefulTwo() = async(CommonPool) {
     doSomethingUsefulTwo()
 }
 
@@ -47,7 +50,7 @@ fun main(args: Array<String>) {
         val one = asyncSomethingUsefulOne()
         val two = asyncSomethingUsefulTwo()
         // but waiting for a result must involve either suspending or blocking.
-        // here we use `runBlocking { ... }` to block the main thread while waiting for the result
+        // here we use `runBlocking { ... }` to ***block the main thread*** while waiting for the result
         runBlocking {
             println("The answer is ${one.await() + two.await()}")
         }

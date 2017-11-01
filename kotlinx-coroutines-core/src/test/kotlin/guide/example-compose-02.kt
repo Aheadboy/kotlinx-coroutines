@@ -17,7 +17,10 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.compose.example02
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
 import kotlin.system.measureTimeMillis
 
 suspend fun doSomethingUsefulOne(): Int {
@@ -32,9 +35,11 @@ suspend fun doSomethingUsefulTwo(): Int {
 
 fun main(args: Array<String>) = runBlocking<Unit> {
     val time = measureTimeMillis {
-        val one = async(CommonPool) { doSomethingUsefulOne() }
-        val two = async(CommonPool) { doSomethingUsefulTwo() }
-        println("The answer is ${one.await() + two.await()}")
+        val one = async(CommonPool) { doSomethingUsefulOne() }//协程1
+        val two = async(CommonPool) { doSomethingUsefulTwo() }//协程2
+        println("The answer is ${one.await() + two.await()}")//子协程one,two类似守护线程，如果没有这两个await，让runBlocking等待，则无法保活进程。
+        //通过这段代码，直观的感觉Deferred中的await有点类似Job中的join。
+        //是否真是如此，我们稍后加以了解。
     }
     println("Completed in $time ms")
 }

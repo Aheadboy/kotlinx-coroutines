@@ -34,7 +34,11 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     val time = measureTimeMillis {
         val one = async(CommonPool, CoroutineStart.LAZY) { doSomethingUsefulOne() }
         val two = async(CommonPool, CoroutineStart.LAZY) { doSomethingUsefulTwo() }
-        println("The answer is ${one.await() + two.await()}")
+        println("The answer is ${one.await() +two.await()}")
+//        * Awaits for completion of this value without blocking a thread and resumes when deferred computation is complete,
+//        * //ljj1,功能：调用await()的协程非阻塞线程等待Deferred的值，一旦Deferred的值获取到，立刻运行该协程。
+//        * returning the resulting value or throwing the corresponding exception if the deferred had completed exceptionally.
+//        * //ljj1,返回值：await()返回Deferred的值，或者Deferred的异常
     }
     println("Completed in $time ms")
 }

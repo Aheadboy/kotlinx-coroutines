@@ -17,23 +17,26 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.compose.example01
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.runBlocking
 import kotlin.system.measureTimeMillis
 
 suspend fun doSomethingUsefulOne(): Int {
+    println("suspending one")
     delay(1000L) // pretend we are doing something useful here
     return 13
 }
 
 suspend fun doSomethingUsefulTwo(): Int {
+    println("suspending two")
     delay(1000L) // pretend we are doing something useful here, too
     return 29
 }
 
 fun main(args: Array<String>) = runBlocking<Unit> {
-    val time = measureTimeMillis {
-        val one = doSomethingUsefulOne()
-        val two = doSomethingUsefulTwo()
+    val time = measureTimeMillis {//测量代码块的执行完成时间
+        val one = doSomethingUsefulOne()//第一次遇见挂起函数，协程runBlocking挂起
+        val two = doSomethingUsefulTwo()//第二次遇见挂起函数，协程runBlocking挂起
         println("The answer is ${one + two}")
     }
     println("Completed in $time ms")
