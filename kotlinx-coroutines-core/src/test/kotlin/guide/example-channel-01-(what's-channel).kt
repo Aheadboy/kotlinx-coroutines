@@ -17,9 +17,29 @@
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
 package guide.channel.example01
 
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.*
+/**
+ * Deferred values provide a convenient way to transfer a single value between coroutines.
+ * Channels provide a way to transfer a stream of values.
+ * Deferred 提供了一种在协程之间传递值的方式。
+ * 通道提供了一种流的形式在协程间传递值
+ * 简单说：
+ * 协程间传递数据流用什么？
+ * 用通道（channel）
+ */
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 
+/**
+ * A Channel is conceptually very similar to BlockingQueue. One key difference is that
+ * instead of a blocking put operation it has a suspending send,
+ * and instead of a blocking take operation it has a suspending receive.
+ *
+ * 通道好比一个阻塞队列。
+ * 不同点在于，
+ * 通道是挂起发送和挂起接收，而非阻塞。
+ */
 fun main(args: Array<String>) = runBlocking<Unit> {
     val channel = Channel<Int>()
     launch(CommonPool) {

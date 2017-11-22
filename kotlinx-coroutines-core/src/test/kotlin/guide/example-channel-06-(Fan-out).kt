@@ -15,23 +15,35 @@
  */
 
 // This file was automatically generated from coroutines-guide.md by Knit tool. Do not edit.
-package guide.channel.example07
+package guide.channel.example06
 
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.channels.*
 
-suspend fun sendString(channel: SendChannel<String>, s: String, time: Long) {
+/**
+ * Fan-out
+ * 扇出
+ * 一个channel的输出由多个协程接受处理。
+ *
+ *
+ */
+fun produceNumbers() = produce<Int>(CommonPool) {
+    var x = 1 // start from 1
     while (true) {
-        delay(time)
-        channel.send(s)
+        send(x++) // produce next
+        delay(100) // wait 0.1s
+    }
+}
+
+fun launchProcessor(id: Int, channel: ReceiveChannel<Int>) = launch(CommonPool) {
+    channel.consumeEach {
+        println("Processor #$id received $it")
     }
 }
 
 fun main(args: Array<String>) = runBlocking<Unit> {
-    val channel = Channel<String>()
-    launch(coroutineContext) { sendString(channel, "foo", 200L) }
-    launch(coroutineContext) { sendString(channel, "BAR!", 500L) }
-    repeat(6) { // receive first six
-        println(channel.receive())
-    }
+    val producer = produceNumbers()
+    repeat(5) { launchProcessor(it, producer) }
+    delay(950)
+    producer.cancel() // cancel producer coroutine and thus kill them all
 }
