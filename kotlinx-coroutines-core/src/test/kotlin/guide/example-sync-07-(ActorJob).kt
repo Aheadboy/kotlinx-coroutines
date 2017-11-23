@@ -42,9 +42,16 @@ suspend fun massiveRun(context: CoroutineContext, action: suspend () -> Unit) {
 // Message types for counterActor
 sealed class CounterMsg
 object IncCounter : CounterMsg() // one-way message to increment counter
+//(val response: CompletableDeferred<Int>)这是一个省略 constructor 关键字的主构造函数
 class GetCounter(val response: CompletableDeferred<Int>) : CounterMsg() // a request with reply
 
 // This function launches a new counter actor
+/**
+ * An actor is a combination of a coroutine, the state that is confined and is encapsulated into this coroutine,
+ * and a channel to communicate with other coroutines.
+ * Actor 共享变量被限定、封装在它的协程里面，由该协程来维护共享变量。
+ * 同时，不同于普通的协程，Actor还有一个channel，用来与其他协程进行通信。
+ */
 fun counterActor() = actor<CounterMsg>(CommonPool) {
     var counter = 0 // actor state
     for (msg in channel) { // iterate over incoming messages
